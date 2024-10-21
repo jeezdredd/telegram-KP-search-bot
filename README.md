@@ -34,8 +34,8 @@ Telegram-бот может выполнять следующие функции:
 4. Создайте файл `.env` и добавьте в него переменные окружения:
     
     ```bash
-    BOT_TOKEN=YOUR_BOT_TOKEN
-   RAPID_API_KEY=YOUR_BOOKING_API_KEY
+    TELEGRAM_TOKEN=YOUR_BOT_TOKEN
+    KINOPOISK_API_KEY=YOUR_BOOKING_API_KEY
       ``` 
          
 5. Запустите бота:

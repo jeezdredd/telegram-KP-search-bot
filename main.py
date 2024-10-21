@@ -1,13 +1,24 @@
-import config_data.config as config
-import telebot
+# main.py
+import os
+from dotenv import load_dotenv
+import logging
+from loader import MovieBot
 
-bot = telebot.TeleBot(config.TELEGRAM_TOKEN)
-
-
-@bot.message_handler(content_types=["text"])
-def repeat_all_messages(message):  # Название функции не играет никакой роли
-    bot.send_message(message.chat.id, message.text)
-
+load_dotenv(".env")
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+)
 
 if __name__ == "__main__":
-    bot.infinity_polling()
+    TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+    KINOPOISK_API_KEY = os.getenv("KINOPOISK_API_KEY")
+
+    if not TELEGRAM_TOKEN:
+        print("Ошибка: Отсутствует API ключ телеграм бота в файле .env")
+        exit(1)
+    if not KINOPOISK_API_KEY:
+        print("Ошибка: Отсутствует API ключ Кинопоиска в файле .env")
+        exit(1)
+
+    movie_bot = MovieBot(TELEGRAM_TOKEN, KINOPOISK_API_KEY)
+    movie_bot.start()

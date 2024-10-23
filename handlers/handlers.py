@@ -725,7 +725,7 @@ class CommandHandlers:
             )
             return
 
-        message_lines = ["📚 <b>Ваша история поиска:</b>"]
+        message_lines = ["📚 Ваша история поиска:"]
         for entry in history:
             search_type = entry["search_type"]
             params = entry["search_params"]

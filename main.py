@@ -4,7 +4,10 @@ from dotenv import load_dotenv
 import logging
 from loader import MovieBot
 
+# Загрузка переменных окружения из файла .env
 load_dotenv(".env")
+
+# Настройка базового логирования
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )

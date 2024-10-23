@@ -13,6 +13,7 @@ class Movie:
     genres: List[str]
     age_rating: Optional[int]
     poster_url: Optional[str]
+    budget: Optional[int]  # Новое поле для бюджета
 
     @classmethod
     def from_api_data(cls, data):
@@ -25,4 +26,7 @@ class Movie:
         ]
         age_rating = data.get("ageRating")
         poster_url = data.get("poster", {}).get("url")
-        return cls(title, description, rating, year, genres, age_rating, poster_url)
+        budget = data.get("budget", {}).get("value")  # Получение значения бюджета
+        return cls(
+            title, description, rating, year, genres, age_rating, poster_url, budget
+        )

@@ -710,7 +710,8 @@ class CommandHandlers:
             elif search_type == "rating":
                 min_rating = escape(str(params.get("min_rating", "N/A")))
                 max_rating = escape(str(params.get("max_rating", "N/A")))
-                genre = escape(params.get("genre", "любой"))
+                genre_value = params.get("genre")
+                genre = escape(genre_value) if genre_value else "любой"
                 count = escape(str(params.get("count", "N/A")))
                 message_lines.append(
                     f"⭐ Поиск по рейтингу:\n"
@@ -721,7 +722,8 @@ class CommandHandlers:
                 )
             elif search_type == "budget":
                 budget_range = escape(params.get("budget_range", "N/A"))
-                genre = escape(params.get("genre", "любой"))
+                genre_value = params.get("genre")
+                genre = escape(genre_value) if genre_value else "любой"
                 count = escape(str(params.get("count", "N/A")))
                 message_lines.append(
                     f"💰 Поиск по бюджету:\n"

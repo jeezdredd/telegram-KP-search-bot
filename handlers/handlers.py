@@ -746,10 +746,10 @@ class CommandHandlers:
                 name = escape(params.get("name", "N/A"))
                 count = escape(str(params.get("count", "N/A")))
                 message_lines.append(
-                    f"📖 <b>Поиск по названию:</b>\n"
-                    f"• <b>Название:</b> {name}\n"
-                    f"• <b>Количество:</b> {count}\n"
-                    f"• <b>Время:</b> {timestamp}\n"
+                    f"📖 Поиск по названию:\n"
+                    f"• Название: {name}\n"
+                    f"• Количество: {count}\n"
+                    f"• Время: {timestamp}\n"
                 )
             elif search_type == "rating":
                 min_rating = escape(str(params.get("min_rating", "N/A")))
@@ -757,22 +757,22 @@ class CommandHandlers:
                 genre = escape(params.get("genre", "любой"))
                 count = escape(str(params.get("count", "N/A")))
                 message_lines.append(
-                    f"⭐ <b>Поиск по рейтингу:</b>\n"
-                    f"• <b>Рейтинг:</b> {min_rating}-{max_rating}\n"
-                    f"• <b>Жанр:</b> {genre}\n"
-                    f"• <b>Количество:</b> {count}\n"
-                    f"• <b>Время:</b> {timestamp}\n"
+                    f"⭐ Поиск по рейтингу:\n"
+                    f"• Рейтинг: {min_rating}-{max_rating}\n"
+                    f"• Жанр: {genre}\n"
+                    f"• Количество: {count}\n"
+                    f"• Время: {timestamp}\n"
                 )
             elif search_type == "budget":
                 budget_range = escape(params.get("budget_range", "N/A"))
                 genre = escape(params.get("genre", "любой"))
                 count = escape(str(params.get("count", "N/A")))
                 message_lines.append(
-                    f"💰 <b>Поиск по бюджету:</b>\n"
-                    f"• <b>Бюджет:</b> {budget_range}\n"
-                    f"• <b>Жанр:</b> {genre}\n"
-                    f"• <b>Количество:</b> {count}\n"
-                    f"• <b>Время:</b> {timestamp}\n"
+                    f"💰 Поиск по бюджету:\n"
+                    f"• Бюджет: {budget_range}\n"
+                    f"• Жанр: {genre}\n"
+                    f"• Количество: {count}\n"
+                    f"• Время: {timestamp}\n"
                 )
 
         # Ограничение длины сообщения Telegram (4096 символов)

@@ -21,10 +21,10 @@ from database.database import (
     get_search_history,
     clear_search_history,
 )
-import telegram
 from datetime import datetime
 import locale
 from html import escape  # Для экранирования специальных символов
+
 
 # Устанавливаем локаль для правильного отображения месяцев
 try:
@@ -174,7 +174,7 @@ class CommandHandlers:
         # Обработчик для очистки истории
         self.clear_history_handler = CallbackQueryHandler(
             self.handle_clear_history,
-            pattern="^(confirm_clear_history|cancel_clear_history)$",
+            pattern="^(clear_history|confirm_clear_history|cancel_clear_history)$",
         )
 
     def register_handlers(self):
@@ -249,7 +249,7 @@ class CommandHandlers:
         ]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
         help_text = (
-            "📜 <b>Доступные команды:</b>\n\n"
+            "📜 Доступные команды:\n\n"
             "/start - Приветственное сообщение\n"
             "/help - Список доступных команд\n"
             "/movie_search - Поиск фильма/сериала по названию\n"
@@ -257,9 +257,7 @@ class CommandHandlers:
             "/movie_by_budget - Поиск фильмов по бюджету и жанру\n"
             "/history - Просмотр истории поиска\n"
         )
-        update.message.reply_text(
-            help_text, parse_mode="HTML", reply_markup=reply_markup
-        )
+        update.message.reply_text(help_text, reply_markup=reply_markup)
 
     # --- Методы для поиска по названию ---
 
@@ -272,9 +270,8 @@ class CommandHandlers:
             keyboard, resize_keyboard=True, one_time_keyboard=True
         )
         update.message.reply_text(
-            "🎬 <b>Введите название фильма или сериала:</b>",
+            "🎬 Введите название фильма или сериала:",
             reply_markup=reply_markup,
-            parse_mode="HTML",
         )
         return MOVIE_NAME
 
@@ -284,9 +281,7 @@ class CommandHandlers:
         """
         name = update.message.text.strip()
         context.user_data["name"] = escape(name)
-        update.message.reply_text(
-            "🔢 <b>Сколько вариантов вывести?</b> (1-250)", parse_mode="HTML"
-        )
+        update.message.reply_text("🔢 Сколько вариантов вывести? (1-250)")
         return MOVIE_COUNT
 
     def get_movie_count(self, update: Update, context: CallbackContext):
@@ -297,10 +292,7 @@ class CommandHandlers:
         try:
             count = int(count_text)
             if count < 1 or count > 250:
-                update.message.reply_text(
-                    "❌ <b>Пожалуйста, введите число от 1 до 250.</b>",
-                    parse_mode="HTML",
-                )
+                update.message.reply_text("❌ Пожалуйста, введите число от 1 до 250.")
                 return MOVIE_COUNT
 
             context.user_data["count"] = count
@@ -312,8 +304,7 @@ class CommandHandlers:
 
             if not movies_data:
                 update.message.reply_text(
-                    "🔍 <b>Фильмы не найдены. Попробуйте другой запрос.</b>",
-                    parse_mode="HTML",
+                    "🔍 Фильмы не найдены. Попробуйте другой запрос."
                 )
                 return ConversationHandler.END
 
@@ -336,9 +327,7 @@ class CommandHandlers:
             return ConversationHandler.END
 
         except ValueError:
-            update.message.reply_text(
-                "❌ <b>Пожалуйста, введите число.</b>", parse_mode="HTML"
-            )
+            update.message.reply_text("❌ Пожалуйста, введите число.")
             return MOVIE_COUNT
 
     # --- Методы для поиска по рейтингу и жанру ---
@@ -352,9 +341,8 @@ class CommandHandlers:
             keyboard, resize_keyboard=True, one_time_keyboard=True
         )
         update.message.reply_text(
-            "⭐ <b>Введите рейтинг или диапазон рейтингов (например, 7 или 7-9.5):</b>",
+            "⭐ Введите рейтинг или диапазон рейтингов (например, 7 или 7-9.5):",
             reply_markup=reply_markup,
-            parse_mode="HTML",
         )
         return MOVIE_RATING
 
@@ -377,14 +365,12 @@ class CommandHandlers:
             # Проверяем корректность введённых значений
             if not (1 <= min_rating <= 10) or not (1 <= max_rating <= 10):
                 update.message.reply_text(
-                    "❌ <b>Пожалуйста, введите рейтинги в диапазоне от 1 до 10.</b>",
-                    parse_mode="HTML",
+                    "❌ Пожалуйста, введите рейтинги в диапазоне от 1 до 10."
                 )
                 return MOVIE_RATING
             if min_rating > max_rating:
                 update.message.reply_text(
-                    "❌ <b>Минимальный рейтинг не может быть больше максимального.</b>",
-                    parse_mode="HTML",
+                    "❌ Минимальный рейтинг не может быть больше максимального."
                 )
                 return MOVIE_RATING
 
@@ -392,15 +378,13 @@ class CommandHandlers:
             context.user_data["max_rating"] = max_rating
 
             update.message.reply_text(
-                "🎨 <b>Введите жанр фильма (например, драма, комедия) или напишите 'любой':</b>",
-                parse_mode="HTML",
+                "🎨 Введите жанр фильма (например, драма, комедия) или напишите 'любой':"
             )
             return MOVIE_GENRE
 
         except ValueError:
             update.message.reply_text(
-                "❌ <b>Пожалуйста, введите корректный рейтинг или диапазон рейтингов.</b>",
-                parse_mode="HTML",
+                "❌ Пожалуйста, введите корректный рейтинг или диапазон рейтингов."
             )
             return MOVIE_RATING
 
@@ -413,9 +397,7 @@ class CommandHandlers:
             context.user_data["genre"] = None
         else:
             context.user_data["genre"] = escape(genre_text)
-        update.message.reply_text(
-            "🔢 <b>Сколько вариантов вывести?</b> (1-250)", parse_mode="HTML"
-        )
+        update.message.reply_text("🔢 Сколько вариантов вывести? (1-250)")
         return MOVIE_RATING_COUNT
 
     def get_rating_count(self, update: Update, context: CallbackContext):
@@ -426,10 +408,7 @@ class CommandHandlers:
         try:
             count = int(count_text)
             if count < 1 or count > 250:
-                update.message.reply_text(
-                    "❌ <b>Пожалуйста, введите число от 1 до 250.</b>",
-                    parse_mode="HTML",
-                )
+                update.message.reply_text("❌ Пожалуйста, введите число от 1 до 250.")
                 return MOVIE_RATING_COUNT
 
             context.user_data["count"] = count
@@ -444,8 +423,7 @@ class CommandHandlers:
 
             if not movies_data:
                 update.message.reply_text(
-                    "🔍 <b>Фильмы не найдены. Попробуйте другой запрос.</b>",
-                    parse_mode="HTML",
+                    "🔍 Фильмы не найдены. Попробуйте другой запрос."
                 )
                 return ConversationHandler.END
 
@@ -473,9 +451,7 @@ class CommandHandlers:
             return ConversationHandler.END
 
         except ValueError:
-            update.message.reply_text(
-                "❌ <b>Пожалуйста, введите число.</b>", parse_mode="HTML"
-            )
+            update.message.reply_text("❌ Пожалуйста, введите число.")
             return MOVIE_RATING_COUNT
 
     # --- Методы для поиска по бюджету и жанру ---
@@ -492,11 +468,10 @@ class CommandHandlers:
             keyboard, resize_keyboard=True, one_time_keyboard=True
         )
         update.message.reply_text(
-            "💰 <b>Выберите тип бюджета:</b>\n"
-            "• <b>Малобюджетные</b> (0-1,500,000 USD)\n"
-            "• <b>Высокобюджетные</b> (100,000,000 USD и выше)",
+            "💰 Выберите тип бюджета:\n"
+            "• Малобюджетные (0-1,500,000 USD)\n"
+            "• Высокобюджетные (100,000,000 USD и выше)",
             reply_markup=reply_markup,
-            parse_mode="HTML",
         )
         return BUDGET_TYPE
 
@@ -513,14 +488,12 @@ class CommandHandlers:
             )
         else:
             update.message.reply_text(
-                "❌ <b>Пожалуйста, выберите корректный тип бюджета или нажмите 'Отмена'.</b>",
-                parse_mode="HTML",
+                "❌ Пожалуйста, выберите корректный тип бюджета или нажмите 'Отмена'."
             )
             return BUDGET_TYPE
 
         update.message.reply_text(
-            "🎨 <b>Введите жанр фильма (например, драма, комедия) или напишите 'любой':</b>",
-            parse_mode="HTML",
+            "🎨 Введите жанр фильма (например, драма, комедия) или напишите 'любой':"
         )
         return BUDGET_GENRE
 
@@ -533,9 +506,7 @@ class CommandHandlers:
             context.user_data["budget_genre"] = None
         else:
             context.user_data["budget_genre"] = escape(genre_text)
-        update.message.reply_text(
-            "🔢 <b>Сколько вариантов вывести?</b> (1-250)", parse_mode="HTML"
-        )
+        update.message.reply_text("🔢 Сколько вариантов вывести? (1-250)")
         return BUDGET_COUNT
 
     def get_budget_count(self, update: Update, context: CallbackContext):
@@ -546,10 +517,7 @@ class CommandHandlers:
         try:
             count = int(count_text)
             if count < 1 or count > 250:
-                update.message.reply_text(
-                    "❌ <b>Пожалуйста, введите число от 1 до 250.</b>",
-                    parse_mode="HTML",
-                )
+                update.message.reply_text("❌ Пожалуйста, введите число от 1 до 250.")
                 return BUDGET_COUNT
 
             context.user_data["count"] = count
@@ -563,8 +531,7 @@ class CommandHandlers:
 
             if not movies_data:
                 update.message.reply_text(
-                    "🔍 <b>Фильмы не найдены. Попробуйте другой запрос.</b>",
-                    parse_mode="HTML",
+                    "🔍 Фильмы не найдены. Попробуйте другой запрос."
                 )
                 return ConversationHandler.END
 
@@ -591,9 +558,7 @@ class CommandHandlers:
             return ConversationHandler.END
 
         except ValueError:
-            update.message.reply_text(
-                "❌ <b>Пожалуйста, введите число.</b>", parse_mode="HTML"
-            )
+            update.message.reply_text("❌ Пожалуйста, введите число.")
             return BUDGET_COUNT
 
     # --- Метод для отправки информации о фильме ---
@@ -611,7 +576,7 @@ class CommandHandlers:
         if len(description) > max_description_length:
             description = description[:max_description_length].rstrip() + "..."
 
-        # Экранирование всех переменных для предотвращения ошибок HTML-разметки
+        # Экранирование всех переменных для предотвращения ошибок
         title = escape(movie.title)
         description = escape(description)
         rating = escape(str(movie.rating)) if movie.rating else "N/A"
@@ -626,17 +591,17 @@ class CommandHandlers:
 
         # Формирование сообщения
         message = (
-            f"📌 <b>Название:</b> {title}\n"
-            f"📝 <b>Описание:</b> {description}\n"
-            f"⭐ <b>Рейтинг:</b> {rating}\n"
-            f"📅 <b>Год:</b> {year}\n"
-            f"🎭 <b>Жанр:</b> {genres}\n"
-            f"🔞 <b>Возрастной рейтинг:</b> {age_rating}+\n"
+            f"📌 Название: {title}\n"
+            f"📝 Описание: {description}\n"
+            f"⭐ Рейтинг: {rating}\n"
+            f"📅 Год: {year}\n"
+            f"🎭 Жанр: {genres}\n"
+            f"🔞 Возрастной рейтинг: {age_rating}+\n"
         )
 
         # Добавление бюджета, если доступно
         if budget:
-            message += f"💸 <b>Бюджет:</b> {budget}\n"
+            message += f"💸 Бюджет: {budget}\n"
 
         # Проверка длины сообщения
         if len(message) > 1024:
@@ -648,47 +613,41 @@ class CommandHandlers:
                     chat_id=update.effective_chat.id,
                     photo=movie.poster_url,
                     caption=message,
-                    parse_mode="HTML",
                 )
-            except telegram.error.BadRequest as e:
+            except Exception as e:
                 # Если сообщение слишком длинное, отправляем без описания и бюджета
                 if "Message caption is too long" in str(e):
                     message = (
-                        f"📌 <b>Название:</b> {title}\n"
-                        f"⭐ <b>Рейтинг:</b> {rating}\n"
-                        f"📅 <b>Год:</b> {year}\n"
-                        f"🎭 <b>Жанр:</b> {genres}\n"
-                        f"🔞 <b>Возрастной рейтинг:</b> {age_rating}+"
+                        f"📌 Название: {title}\n"
+                        f"⭐ Рейтинг: {rating}\n"
+                        f"📅 Год: {year}\n"
+                        f"🎭 Жанр: {genres}\n"
+                        f"🔞 Возрастной рейтинг: {age_rating}+"
                     )
                     if budget:
-                        message += f"\n💸 <b>Бюджет:</b> {budget}"
+                        message += f"\n💸 Бюджет: {budget}"
                     if len(message) > 1024:
                         message = message[:1021].rstrip() + "..."
                     context.bot.send_photo(
                         chat_id=update.effective_chat.id,
                         photo=movie.poster_url,
                         caption=message,
-                        parse_mode="HTML",
                     )
                 else:
                     update.message.reply_text(
-                        "❌ <b>Произошла ошибка при отправке информации о фильме. Пожалуйста, попробуйте позже.</b>",
-                        parse_mode="HTML",
+                        "❌ Произошла ошибка при отправке информации о фильме. Пожалуйста, попробуйте позже."
                     )
         else:
             try:
-                update.message.reply_text(message, parse_mode="HTML")
-            except telegram.error.BadRequest as e:
+                update.message.reply_text(message)
+            except Exception as e:
                 # Если сообщение слишком длинное, отправляем его частями или сокращаем
                 if "too long" in str(e).lower():
                     for i in range(0, len(message), 1024):
-                        update.message.reply_text(
-                            message[i : i + 1024], parse_mode="HTML"
-                        )
+                        update.message.reply_text(message[i : i + 1024])
                 else:
                     update.message.reply_text(
-                        "❌ <b>Произошла ошибка при отправке информации о фильме. Пожалуйста, попробуйте позже.</b>",
-                        parse_mode="HTML",
+                        "❌ Произошла ошибка при отправке информации о фильме. Пожалуйста, попробуйте позже."
                     )
 
     # --- Метод для отправки главного меню ---
@@ -706,9 +665,8 @@ class CommandHandlers:
         ]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
         update.message.reply_text(
-            "🔄 <b>Выберите следующее действие:</b>",
+            "🔄 Выберите следующее действие:",
             reply_markup=reply_markup,
-            parse_mode="HTML",
         )
 
     # --- Метод для отображения истории поиска ---
@@ -720,9 +678,7 @@ class CommandHandlers:
         history = get_search_history(user_id)
 
         if not history:
-            update.message.reply_text(
-                "📭 <b>Ваша история поиска пуста.</b>", parse_mode="HTML"
-            )
+            update.message.reply_text("📭 Ваша история поиска пуста.")
             return
 
         message_lines = ["📚 Ваша история поиска:"]
@@ -779,18 +735,14 @@ class CommandHandlers:
         full_message = "\n".join(message_lines)
         if len(full_message) > 4096:
             for i in range(0, len(full_message), 4096):
-                update.message.reply_text(full_message[i : i + 4096], parse_mode="HTML")
+                update.message.reply_text(full_message[i : i + 4096])
         else:
-            # Добавление кнопок для очистки истории
+            # Добавление кнопки "Очистить историю поиска"
             keyboard = [
                 [
                     InlineKeyboardButton(
-                        "✅ Да, очистить", callback_data="confirm_clear_history"
-                    ),
-                    InlineKeyboardButton(
-                        "❌ Нет, не очищать",
-                        callback_data="cancel_clear_history",
-                    ),
+                        "🗑️ Очистить историю поиска", callback_data="clear_history"
+                    )
                 ]
             ]
             reply_markup = InlineKeyboardMarkup(keyboard)
@@ -806,13 +758,26 @@ class CommandHandlers:
 
         data = query.data
 
-        if data == "confirm_clear_history":
+        if data == "clear_history":
+            # Отправка подтверждающего сообщения
+            keyboard = [
+                [
+                    InlineKeyboardButton(
+                        "✅ Да, очистить", callback_data="confirm_clear_history"
+                    ),
+                    InlineKeyboardButton(
+                        "❌ Нет, не очищать", callback_data="cancel_clear_history"
+                    ),
+                ]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            query.edit_message_text(
+                "❓ Вы уверены, что хотите очистить историю поиска?",
+                reply_markup=reply_markup,
+            )
+        elif data == "confirm_clear_history":
             user_id = query.from_user.id
             clear_search_history(user_id)
-            query.edit_message_text(
-                "🗑️ Ваша история поиска успешно очищена.",
-            )
+            query.edit_message_text("🗑️ Ваша история поиска успешно очищена.")
         elif data == "cancel_clear_history":
-            query.edit_message_text(
-                "ℹ️ Очистка истории поиска отменена.",
-            )
+            query.edit_message_text("ℹ️ Очистка истории поиска отменена.")

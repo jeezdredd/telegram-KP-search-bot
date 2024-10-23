@@ -785,7 +785,7 @@ class CommandHandlers:
             keyboard = [
                 [
                     InlineKeyboardButton(
-                        "✅ =Да, очистить=", callback_data="confirm_clear_history"
+                        "✅ Да, очистить", callback_data="confirm_clear_history"
                     ),
                     InlineKeyboardButton(
                         "❌ Нет, не очищать",

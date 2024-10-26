@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+.idea
+venv/
+*.log
+history.db

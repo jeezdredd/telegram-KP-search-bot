@@ -34,8 +34,8 @@ Telegram-бот может выполнять следующие функции:
 ### 2. Клонирование репозитория
 
 ```bash
-git clone https://github.com/yourusername/telegram-movie-search-bot.git
-cd telegram-movie-search-bot
+https://github.com/jeezdredd/telegram-KP-search-bot.git
+cd telegram-KP-search-bot
 ```
 
 ## 3. Создание виртуального окружения
